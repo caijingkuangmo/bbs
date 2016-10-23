@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #-*-coding:utf-8-*-
-__author__ = 'Eva_J'
+
 import json
 
 from django.shortcuts import render,HttpResponse,HttpResponseRedirect
