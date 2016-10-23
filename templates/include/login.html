@@ -1,0 +1,16 @@
+{% load form_tag %}
+<style>
+    .loginInput{
+        width: 60%;
+    }
+</style>
+<div class="form-group form-btm">
+        <label class="col-sm-2 control-label">Username</label>
+        {{ obj.username }}
+        <div class = "validate"><span id="userAuth"> {% error_message errors.username %} </span></div>
+</div>
+<div class="form-group form-btm">
+        <label class="col-sm-2 control-label">Password</label>
+        {{ obj.password }}
+        <div class = "validate"><span id="pwdAuth">{%   error_message errors.password %}</span></div>
+</div>

@@ -1,0 +1,33 @@
+{% for contentItem in articles %}
+    <div class="content-item">
+        <div class="item-title">
+            <a href={{ contentItem.articlehref.href }} class="show-content">{{ contentItem.title }}</a>
+        </div>
+        {% if contentItem.img %}
+            <div class="item-picture"><img src={{ contentItem.articlepicture.img }} width="70" height="70"/></div>
+        {% endif %}
+        {% if contentItem.summary %}
+            <div class="item-abstract">{% contentItem.articlehref.summary %}</div>
+        {% endif %}
+        <div class="item-comment">
+            {% ifequal contentItem.thumbup_set.select_related.user.user.name.first request.user %}
+                <span class="item-agree item-agree-click"></span>
+            {% else%}
+                <span class="item-agree"></span>
+            {% endifequal %}
+            <span class="item-num">{{ contentItem.thumbup_set.select_related.count }}</span>
+            <span class="item-discuss"></span>
+            <span class="item-num">{{ contentItem.comment_set.select_related.count }}</span>
+            <span class="item-store"></span>
+            <span class="item-store-char">收藏</span>
+            <a href="http://dig.chouti.com/user/link/saved/1" class="item-auth">
+                <span class="item-photo"><img src="/static/images/photo.JPG" width="20" height="20"/></span>
+                <b class="item-store-char">Eva_J</b>
+            </a>
+            <span class="item-time">
+                <a class="item-time-a"><b>1分钟前</b></a>
+                <i>入热榜</i>
+            </span>
+        </div>
+    </div>
+{% endfor %}

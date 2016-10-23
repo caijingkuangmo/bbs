@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+{% load form_tag %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/common.css">
+    <title>抽屉新热榜-聚合每日热门</title>
+</head>
+<body>
+    <!--导航开始-->
+    <div class="chouti-nav">
+        <div id ='navbar' class="chouti-nav-inner">
+            <ul class="chouti-nav-left" id="chouti-nav-left">
+                <li class="nav-li-logo"></li>
+                <li class="nav-li"><a href="{% url 'home' %}">全部</a></li>
+                <li class="nav-li"><a href="{% url 'category' 1 %}">42区</a></li>
+                <li class="nav-li"><a href="{% url 'category' 2 %}">段子</a></li>
+                <li class="nav-li"><a href="{% url 'category' 3 %}">图片</a></li>
+                <li class="nav-li"><a href="{% url 'category' 4 %}">挨踢1024</a></li>
+                <li class="nav-li"><a href="{% url 'category' 5 %}">你问我答</a></li>
+            </ul>
+            <ul class="chouti-nav-right">
+                <li class="nav-li-right">通知</li>
+                {% if request.user.is_authenticated %}
+                    <li class="nav-li-right">
+                        <div class="btn-group">
+                          <a class="btn dropdown-toggle btn-group-a" data-toggle="dropdown" href="#">{{ request.user }}<span class="caret"></span></a>
+                          <ul class="dropdown-menu">
+                              <li><a class='lab-a' href="#">我的新热榜</a></li>
+                              <li><a class='lab-a' href="#">设置</a></li>
+                              <li><a class='lab-a' href="{% url 'logout' %}">退出</a></li>
+                              <li><a class='lab-a' href="#">我的收藏</a></li>
+                          </ul>
+                        </div>
+                    </li>
+                {% else %}
+                    <li class="nav-li-right" data-toggle="modal" data-target="#loginModal" onclick="getlogin('#loginRender')">登录</li>
+                {% endif %}
+                <li class="nav-li-search">
+                    <form>
+                        <input class="nav-right-inp" />
+                        <span class="glyphicon glyphicon-search nav-right-search"></span>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!--导航结束-->
+
+    <!--content开始-->
+    <div class="content">
+        <div class="content-inner">
+            <div class="content-left">
+                <!--左侧部分顶部开始-->
+                <div class="content-top">
+                    <div class="content-topL">
+                        <div class="content-top-child active">最热</div>
+                        <div class="content-top-child">最新</div>
+                        <div class="content-top-child">人类发布</div>
+                    </div>
+                    <div class="content-topR">
+                        <div>
+                            <div class="content-top-child">即时排序</div>
+                            <div class="content-top-child">24小时</div>
+                            <div class="content-top-child">3天</div>
+                            <div class="content-top-child publish" data-toggle="modal" data-target="#myModal" onclick="publish(this,'href')">+ 发布</div>
+                        </div>
+                    </div>
+                </div>
+                <!--左侧部分顶部结束-->
+
+                <!--左侧部分内容开始-->
+                <div class="content-items" id="content-items">
+                    {% for contentItem in articles reversed%}
+                        <div class="content-item">
+                            <div class="item-title">
+                                <a href={{ contentItem.articlehref.articlehref }} class="show-content">{{ contentItem.title }}</a>
+                            </div>
+                            {% if contentItem.articlepicture.img %}
+                                <div class="item-picture"><img src={{ contentItem.articlepicture.img }} width="70" height="70"/></div>
+                            {% endif %}
+                            {% if contentItem.articlehref.summary %}
+                                <div class="item-abstract">{{ contentItem.articlehref.summary }}</div>
+                            {% endif %}
+                            <div class="item-comment">
+                                {% if request.user.is_authenticated %}
+                                    <span class="item-agree {% thumb_user request contentItem %}"></span>
+                                {% else%}
+                                    <span class="item-agree"></span>
+                                {% endif %}
+                                <span class="item-num">{{ contentItem.thumbup_set.select_related.count }}</span>
+                                <span class="item-discuss" onclick="discuss(this)"></span>
+                                <span class="item-num">{{ contentItem.comment_set.select_related.count }}</span>
+                                <span class="item-store"></span>
+                                <span class="item-store-char">收藏</span>
+                                <a href="http://dig.chouti.com/user/link/saved/1" class="item-auth">
+                                    <span class="item-photo"><img src="/static/images/photo.JPG" width="20" height="20"/></span>
+                                    <b class="item-store-char">Eva_J</b>
+                                </a>
+                                <span class="item-time">
+                                    <a class="item-time-a"><b>{% countTime contentItem %}</b></a>
+                                    <i>入热榜</i>
+                                </span>
+                            </div>
+                            <div></div>
+                        </div>
+                    {% endfor %}
+                 </div>
+                <!--左侧部分内容结束-->
+            </div>
+
+            <!--右侧部分内容开始-->
+            <div class="content-right">
+                <!--聊天部分内容开始-->
+                <div class="chat-area">
+                    <div class="chat-area-inner">新热聊天 2.6.15</div>
+                    <div class="chat-main" id="chat-main">
+                        <div class="send">
+                            <div class="userInfo"><span class="userInforight">13:41</span><span class="userInforight">Eva_J</span></div>
+                            <div class="arrow-right"></div>
+                            <div class="sentenc-right">老师好！做了一个晚上的多级评论，自己把自己感动哭了。。。</div>
+                        </div>
+                        <div class="send">
+                            <div class="userInfo"><span class="userInfoleft">13:45</span><span class="userInfoleft">alex</span></div>
+                            <div class="arrow-left"></div>
+                            <div class="sentence">这个作业可以得A，哈~~~</div>
+                        </div>
+                    </div>
+                    <div class="chat-mid">Eva_J</div>
+                    <div class="chat-bottom">
+                        <div class="chat-text"><textarea class="chat-textarea" id="chat-textarea"></textarea></div>
+                        <div class="chat-send"><input class="chat-send-button" type="button" value="发送" onclick="send()"/></div>
+
+                    </div>
+                </div>
+                <!--聊天部分内容结束-->
+
+                <!--新热客户模块开始-->
+                <div class="hot-client">
+                    <a target="_blank" href="http://dig.chouti.com/download/model" class="hot-client-inner"></a>
+                    <a target="_blank" href="http://dig.chouti.com/download/model/iphone" class="hot-client_iphone" id="hot-client_iphone"></a>
+                    <a target="_blank" href="http://dig.chouti.com/download/model/andorid" class="hot-client_android" id="hot-client_android"></a>
+                    <a target="_blank" href="http://dig.chouti.com/download/model/wphone" class="hot-client_windows" id="hot-client_windows"></a>
+                </div>
+                <!--新热客户模块结束-->
+
+                <!--tab:24小时全部top10开始-->
+                <div class="hottop">
+                    <ul id="myTab" class="nav nav-tabs">
+                       <li class="active"><a href="#hot" data-toggle="tab">最热榜</a></li>
+                       <li><a href="#hot-content" data-toggle="tab">最热评论</a></li>
+                    </ul>
+                    <div id="myTabContent" class="tab-content">
+                       <div class="tab-pane fade in tab-Custom active" id="hot">
+                           <div class="top-item">
+                               <div class="comment-num">123</div>
+                               <p>雾霾的夜晚，走在晚归的街道上，更容易伤感。</p></div>
+                           <div class="top-item">
+                               <div class="comment-num">234</div>
+                               <p>当我面对一行行代码和一个个需求越来越兴奋的时候，也会突然有些害怕。</p>
+                           </div>
+                           <div class="top-item">
+                               <div class="comment-num">242</div>
+                               <p>那些站在微风轻抚过图书馆门口草地上嬉笑的日子；还有围着操场一圈一圈跑过的路，看过的夕阳。。。</p>
+                           </div>
+                           <div class="top-item">
+                               <div class="comment-num">253</div>
+                               <p>是不是随着一天天的早出晚归慢慢的消逝了，亦或者埋没在那些没完没了的算法中。。。</p>
+                           </div>
+                           <div class="top-item">
+                               <div class="comment-num">253</div>
+                               <p>时间像是一个漆黑的漩涡，吞噬着过往的喜怒哀乐，突然发现时间比记忆残忍，曾经刻骨铭心的也慢慢被磨平，那些释怀不了的也终将被忘记。</p>
+                           </div>
+                           <div class="top-item">
+                               <div class="comment-num">367</div>
+                               <p>巴黎艺术桥上的那些锁都被拆掉了，可是我们却都不再关心。。。</p>
+                           </div>
+                       </div>
+                       <div class="tab-pane fade tab-Custom" id="hot-content">
+                            <div class="top-item-2">
+                                <div class="comment-content">
+                                    <div class="comment-content-top">
+                                        <div class="comment-content-top-left">
+                                            <span>zhexue</span>
+                                            <span>17.26</span>
+                                        </div>
+                                        <div class="comment-content-top-right">
+                                            <span>踩<span>[218]</span></span>
+                                            <span>顶<span>[2]</span></span>
+                                            <span>回复</span>
+                                        </div>
+                                    </div>
+                                    <p>葫芦娃：【蛇精，放开我爷爷！】爷爷：【小孩子懂什么，给我回家去！】</p>
+                                </div>
+                                <div class="article">原文：葫芦娃的爷爷叫什么?</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <!--tab:24小时全部top10结束-->
+            </div>
+            <!--右侧部分内容结束-->
+            <!--分页开始-->
+            <div class="page-divide">
+                <ul class="pagination">
+                  <li><a href="#">&laquo;</a></li>
+                  <li><a href="#">1</a></li>
+                  <li><a href="#">2</a></li>
+                  <li><a href="#">3</a></li>
+                  <li><a href="#">4</a></li>
+                  <li><a href="#">5</a></li>
+                  <li><a href="#">6</a></li>
+                  <li><a href="#">7</a></li>
+                  <li><a href="#">8</a></li>
+                  <li><a href="#">9</a></li>
+                  <li><a href="#">10</a></li>
+                  <li><a href="#">&raquo;</a></li>
+                </ul>
+            </div>
+            <!--分页结束-->
+        </div>
+    </div>
+    <!--content结束-->
+
+    <!-- 模态框（Model） -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+       <div class="modal-dialog">
+          <div class="modal-content">
+             <div class="modal-header">
+                <button type="button" class="close"
+                   data-dismiss="modal" aria-hidden="true">
+                      &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">分享新发现</h4>
+             </div>
+             <form method="post" action="{% url 'add' %}" enctype="multipart/form-data">{% csrf_token %}
+                 <div class="modal-body">
+                    <ul id="AddDailogTab" class="nav nav-tabs">
+                       <li class="active" onclick="publish(this,'href')"><a href="#href" data-toggle="tab">链接</a></li>
+                       <li onclick="publish(this,'episode')"><a href="#episode" data-toggle="tab">文字</a></li>
+                       <li onclick="publish(this,'picture')"><a href="#picture" data-toggle="tab">图片</a></li>
+                    </ul>
+                    <div id="publishBody" class="tab-content">
+                       <div class="tab-pane fade in active dailog-tab-custom" id="href"></div>
+                       <div class="tab-pane fade" id="episode"></div>
+                       <div class="tab-pane fade" id="picture"></div>
+                    </div>
+                 </div>
+                 <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary" >发布</button>
+                     <!--onclick="add('#AddDailogTab')"-->
+                 </div>
+             </form>
+          </div>
+    </div>
+    </div>
+    <!-- 模态框（Model） -->
+
+    <!--login begin-->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+       <div class="modal-dialog">
+           <div class="modal-content">
+               <div class="modal-header">
+                   <div class="modal-title">Sign In</div>
+               </div>
+               <form class="form-horizontal"  method="post" action="{% url 'login' %}">{% csrf_token %}
+                    <div class="modal-body" id="loginRender">
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <div class = "validate"><span id="auth"></span></div>
+                                <input type="submit" class="btn btn-default btn-sign align-right" id="signIn" value="Sign in" />
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+           </div>
+       </div>
+    </div>
+    <!--login end-->
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/index.js"></script>
+    <script src="/static/js/home.js"></script>
+    <script src="/static/js/login.js"></script>
+    <script src="/static/js/commentReply.js"></script>
+    <script>
+        $(function(){
+        var menus = $("#navbar a[href='{{ request.path }}']")[0];
+        console.info(menus)
+        $(menus).parent().addClass("nav-li-mouseon")
+        $(menus).parent().siblings().removeClass("nav-li-mouseon")
+        })
+
+        function auth(ths,authtype){
+            if('{{ request.user.is_authenticated }}'=='False'){
+                alert('请先登录,用户名是:jly,密码：123')
+                if(authtype=='publish'){
+                    $(ths).attr('data-dismiss',"modal")
+                    $(ths).attr('data-toggle','');
+                    $(ths).attr('data-target','');
+                }
+                //return false
+                ths.preventDefault()//不会写，就这样写一个不存在的方法，就可以阻止后面的js执行了。。。蠢哭~~~
+            }
+
+        }
+    </script>
+</body>
+</html>
+
+

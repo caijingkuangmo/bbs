@@ -1,0 +1,22 @@
+<div class="tab-link-inner">
+  <div class="add-link-01">添加链接</div>
+  <div class="add-link-02">
+      <!--<div class="add-link-021"><input id="newLink"/></div>-->
+      <div class="add-link-021">{{ href.href }}</div>
+      <div class="add-link-022" id="getTitleButton" onclick="getTitle()">获取标题</div>
+  </div>
+  <div class="add-link-01">标题</div>
+  <!--<div class="add-link-02 add-link-03"><input id="newTitle"/></div>-->
+  <div class="add-link-02 add-link-03">{{ href.title }}</div>
+
+  <div class="add-link-01">添加摘要(选填)</div>
+  <!--<div class="add-link-02 add-link-04"><textarea id="newAbstract"></textarea></div>-->
+  <div class="add-link-02 add-link-04">{{ href.summary }}</div>
+
+  <div class="add-link-05">发布到： </div>
+  <div class="add-link-05">{{ href.category }}</div>
+</div>
+
+
+
+

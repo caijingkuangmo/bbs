@@ -1,0 +1,43 @@
+<style>
+    .replyTextArea{
+        background-color: #E6ECF3;
+        padding: 12px 20px;
+        margin-left: 10px;
+    }
+    .replyTextArea textarea{
+        width: 100%;
+        rows: 3
+    }
+
+    .replyButton{
+        width: 62px;
+        height: 31px;
+        line-height: 24px;
+        display: block;
+        text-align: center;
+        color: #fff;
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 5px;
+        margin-left: 5px;
+        background-color: #BFD6E5;
+        border-radius: 5px;
+        float:left;
+    }
+
+    .replyButton-active{
+        background-color:#3459A2;
+        color:#FFFFFF;
+    }
+</style>
+{% load form_tag %}
+<div class="commentTree">
+    {% build_comment_tree commentLst %}
+    <div class="row commentTestArea">
+        <div class="replyTextArea col-md-9">
+            <textarea onblur="replyAuth(this)"></textarea>
+        </div>
+        <input type="button" style="" onclick="replyComment(this)" value="reply" class="replyButton">
+    </div>
+    <div class="closeComment"><input type="button" value="close" style="border-radius:5px;" onclick="closeComment(this)"/></div>
+</div>
